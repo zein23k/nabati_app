@@ -21,11 +21,11 @@ jobs:
           channel: ${{ github.event.inputs.flutter-version }}
 
       - name: Install dependencies (app)
-        working-directory: flutter_application_2/nabati_app
+        working-directory: .
         run: flutter pub get
 
       - name: Build debug APK
-        working-directory: flutter_application_2/nabati_app
+        working-directory: .
         run: flutter build apk --debug -v
 
       - name: Upload APK artifact
