@@ -1,0 +1,44 @@
+name: Build debug APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      flutter-version:
+        description: 'Flutter channel or version (optional)'
+        required: false
+        default: 'stable'
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ github.event.inputs.flutter-version }}
+
+      - name: Install dependencies (app)
+        working-directory: flutter_application_2/nabati_app
+        run: flutter pub get
+
+      - name: Build debug APK
+        working-directory: flutter_application_2/nabati_app
+        run: flutter build apk --debug -v
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: |
+            flutter_application_2/nabati_app/build/app/outputs/flutter-apk/app-debug.apk
+
+      - name: Upload model and heatmaps
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-and-heatmaps
+          path: |
+            flutter_application_2/nabati_app/assets/models/nabati_model.tflite
+            flutter_application_2/nabati_app/assets/heatmaps/**
